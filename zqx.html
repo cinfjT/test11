@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <style>
+        /* 光标样式 */
+        #typing-text::after {
+            content: "|";
+            animation: blink 0.7s infinite;
+        }
+
+        @keyframes blink {
+
+            0%,
+            100% {
+                opacity: 1;
+            }
+
+            50% {
+                opacity: 0;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <div id="typing-text" style="font-family: monospace; font-size: 10rem;"></div>
+
+    <script>
+        const text = "放屁"; // 要显示的文字
+        const typingElement = document.getElementById("typing-text");
+        let index = 0;
+
+        function typeText() {
+            if (index < text.length) {
+                // 逐个字符添加到元素中
+                typingElement.textContent += text.charAt(index);
+                index++;
+                // 设置打字速度（单位：毫秒）
+                setTimeout(typeText, 200); // 每 200ms 打一个字
+            }
+        }
+
+        // 开始打字效果
+        typeText();
+    </script>
+</body>
+
+</html>
