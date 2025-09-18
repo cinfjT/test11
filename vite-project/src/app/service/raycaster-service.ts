@@ -2,29 +2,24 @@ import * as THREE from 'three';
 
 
 export function pointerdownFunc(event: any, domElement: any, camera: any, objList: any) {
-    const objs = raycasterObjs(event, domElement, camera, objList);
-    objs.forEach(item => {
-      console.log(item);
-      console.log(item.object.userData["type"])
+    const res = raycasterObjs(event, domElement, camera, objList);
+    res.forEach(item => {
+      const obj = item.object;
+      const worldPosition = new THREE.Vector3();
+      obj.getWorldPosition(worldPosition);
+      console.log(obj.name, '本地', obj.position, '世界', worldPosition);
+
+      console.log(item)
     });
   }
 
 function raycasterObjs(event: any, domElement: any, camera: any, objList: any){
-    let Sx = event.clientX;//鼠标单击位置横坐标
-    let Sy = event.clientY;//鼠标单击位置纵坐标
-    const rect = domElement.getBoundingClientRect();
-    //屏幕坐标转webGl标准设备坐标
-    if (event.changedTouches) {
-        Sx = event.changedTouches[0].pageX;
-        Sy = event.changedTouches[0].pageY;
-    } else {
-        Sx = event.clientX - rect.left
-        Sy = event.clientY - rect.top
-    }
-    var x = (Sx / domElement.clientWidth) * 2 - 1;//webgl标准设备横坐标
-    var y = -(Sy / domElement.clientHeight) * 2 + 1;//webgl标准设备纵坐标
-    var raycaster = new THREE.Raycaster();
-    //通过鼠标单击位置标准坐标和相机参数计算射线头投射器Raycaster 射线属性 ray
-    raycaster.setFromCamera(new THREE.Vector2(x, y), camera);
-    return raycaster.intersectObjects(objList,false);
+    const cx = event.offsetX;// 鼠标点击相对画布左上角的屏幕坐标
+    const cy = event.offsetY;
+    const canvasSize = domElement.getBoundingClientRect();
+    const dx = (cx / canvasSize.width) * 2 - 1; // 标准设备坐标
+    const dy = -(cy / canvasSize.height) * 2 + 1;
+    const raycaster = new THREE.Raycaster(); // 创建射线投射器对象
+    raycaster.setFromCamera(new THREE.Vector2(dx, dy), camera); // 给该对象的ray属性赋值，即生成一条射线
+    return raycaster.intersectObjects(objList, true); // 第二个参数 是否检测该对象子元素
 }
